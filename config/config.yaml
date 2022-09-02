@@ -1,0 +1,2 @@
+model: mobilenetv3_large_100 
+image: https://github.com/pytorch/hub/raw/master/images/dog.jpg
