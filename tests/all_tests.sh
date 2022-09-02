@@ -21,7 +21,7 @@ fi
 
 for MODEL in resnet18 vit_base_patch16_224 coat_tiny
 do
-	RUN_OUT=$(docker run $CONTAINER_NAME --model $MODEL --image https://github.com/pytorch/hub/raw/master/images/dog.jpg)
+	RUN_OUT=$(docker run $CONTAINER_NAME model=$MODEL image=https://github.com/pytorch/hub/raw/master/images/dog.jpg)
 
 	if [ $? -eq 0 ]; then
 		echo "✅ Run $MODEL success"
@@ -32,7 +32,7 @@ do
 
 	## Test if output is valid json
 
-	python3 -c "import json; json.loads('$RUN_OUT')"
+	python3 -c "import json; json.loads(json.dumps($RUN_OUT))"
 
 	if [ $? -eq 0 ]; then
 		echo "✅ Output is valid json"
