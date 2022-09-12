@@ -21,12 +21,12 @@ import json
 
 @hydra.main(version_base=None, config_path="config", config_name="config")
 def main(cfg: DictConfig):
-    setup_default_logging(default_level=logging.CRITICAL, log_path='/dev/null')
+    # setup_default_logging(default_level=logging.CRITICAL, log_path='/dev/null')
 
     model = create_model(cfg.model, in_chans=3, pretrained=True)
     model.eval()
-    # https: //github.com/pytorch/hub/raw/master/images/dog.jpg
 
+    # https: //github.com/pytorch/hub/raw/master/images/dog.jpg
     response = requests.get(cfg.image).content
     im = Image.open(io.BytesIO(response))
 
@@ -47,11 +47,6 @@ def main(cfg: DictConfig):
         probs = torch.nn.functional.softmax(pred, dim=1)
         conf, classes = torch.max(probs, 1)
 
-    # filename = "imagenet1000_labels.txt"
-    # with open(filename) as f:
-    #     idx2label = eval(f.read())
-
-    
 
     idx2label = []
     cls2label = {}
@@ -64,7 +59,7 @@ def main(cfg: DictConfig):
 
     out_dict = {}
     out_dict["predicted"] = str(idx2label[classes.cpu().numpy()[0]])
-    out_dict["confidence"] = str(int(conf.cpu().numpy()[0] * 100))
+    out_dict["confidence"] = float(conf.cpu().numpy()[0] * 100)
 
 
     # Serializing json
@@ -72,4 +67,5 @@ def main(cfg: DictConfig):
     print(json_object)
 
 if __name__ == '__main__':
+    logging.disable(logging.CRITICAL)
     main()
